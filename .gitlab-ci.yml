@@ -1,0 +1,47 @@
+---
+cache: &global_cache
+  paths:
+    - vendor/bundle
+    - node_modules
+    - public/assets
+    - tmp/cache/sprockets
+    - tmp/cache/sass
+
+image:
+  name: jdubz/rubynode:2.6.6
+
+rspec:
+  stage: test
+  services:
+    - name: docker:19.03.1-dind
+    - name: postgres:12.2-alpine
+
+  variables:
+    DOCKER_DRIVER: overlay2
+    RAILS_ENV: test
+    RACK_ENV: test
+    NODE_ENV: test
+    POSTGRES_DB: sacdb
+    POSTGRES_USER: sac
+    POSTGRES_PASSWORD: ""
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+
+  before_script:
+    - apk --update add postgresql-dev tzdata
+    - bundle install --jobs $(nproc) --deployment
+    - yarn install
+    - bundle exec rails db:migrate
+  script:
+    bundle exec rspec
+
+rubocop:
+  stage: test
+  services:
+    - name: docker:19.03.1-dind
+  before_script:
+    - apk --update add postgresql-dev tzdata
+    - bundle install --jobs $(nproc) --deployment
+    - yarn install
+  script:
+    bundle exec rubocop
