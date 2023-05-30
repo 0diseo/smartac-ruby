@@ -1,0 +1,12 @@
+%li.nav-item.dropdown.ml-auto.notifications
+  %a#navbar-notification-menu-link.nav-link.dropdown{href: '#', 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'false'}
+    %i.fa.fa-bell.notification_count
+      - if @target.has_unopened_notifications?
+        %span.badge.badge-pill= @target.unopened_notification_count()
+  .dropdown-menu.dropdown-menu-right{'aria-labelledby' => 'navbar-notification-menu-link'}
+    %span.dropdown-item
+      - if @target.has_unopened_notifications?
+        = link_to 'Mark all as Read', open_all_notifications_path_for(@target, parameters.slice(:routing_scope, :devise_default_routes)), method: :post, remote: true
+      - else
+        %span.dropdown-header No unread notifications
+    = yield :notification_index

@@ -1,0 +1,25 @@
+- content_for :notification_content, flush: true do
+  .dropdown-notification.bg-light.text-secondary.p-2
+    .d-inline-block
+      %i.fa.fa-bolt.fa-2x.mx-3
+    .d-inline-block.align-top
+      - if notification.unopened?
+        %i.fa.fa-circle.text-danger
+      - else
+        %i.fa.fa-circle.text-muted
+    .d-inline-block.dropdown-notification-content
+      %p
+        Device
+        %strong= notification.notifiable.device.serial_number
+        indicates it needs a new filter.
+        %br/
+        %span.small= notification.created_at.strftime('%b %d %H:%M')
+
+%span.dropdown-item{class: "notification_#{notification.id}"}
+  - if notification.unopened?
+    = link_to open_notification_path_for(notification, parameters.slice(:routing_scope, :devise_default_routes).merge(reload: false)), method: :put, remote: true, class: 'text-decoration-none text-reset' do
+      = yield :notification_content
+  - else
+    = link_to move_notification_path_for(notification, parameters.slice(:routing_scope, :devise_default_routes)) do
+      = yield :notification_content
+

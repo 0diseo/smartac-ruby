@@ -1,0 +1,8 @@
+- if @target.has_unopened_notifications?
+  $('.notification_count').html("<span class='badge badge-pill'>#{@target.unopened_notification_count(@index_options)}</span>");
+- else
+  $('.notification_count').empty();
+- if @index_options[:with_group_members]
+  $('.notification_#{@notification.id}"').replaceWith("#{escape_javascript(render_notification(@notification, @index_options.slice(:routing_scope, :devise_default_routes).merge(fallback: :default_without_grouping, with_group_members: true)) )}");
+- else
+  $('.notification_#{@notification.id}').replaceWith("#{escape_javascript(render_notification(@notification, @index_options.slice(:routing_scope, :devise_default_routes).merge(fallback: :default)))}");

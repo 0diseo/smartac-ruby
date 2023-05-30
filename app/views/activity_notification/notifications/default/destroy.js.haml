@@ -1,0 +1,8 @@
+- if @target.has_unopened_notifications?
+  :javascript
+    $('.notification_count').html("<span class='badge badge-pill'>#{@target.unopened_notification_count(@index_options)}</span>");
+- else
+  :javascript
+    $('.notification_count').empty();
+:javascript
+  $('.notification_#{@notification.id}').remove();

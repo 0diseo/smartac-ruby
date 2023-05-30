@@ -1,0 +1,115 @@
+version: '3.5'
+services:
+  app: &app
+    container_name: smart_ac_app
+    image: theoremco/template-ruby-smartac-app:v2
+    tmpfs:
+      - /app/tmp
+      - /app/log
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - type: volume
+        source: node_modules
+        target: /app/node_modules
+        volume:
+          nocopy: true
+      - type: volume
+        source: vendor_bundle
+        target: /app/vendor/bundle
+        volume:
+          nocopy: true
+
+  postgres: &postgres
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_DB=sacdb
+      - POSTGRES_USER=sac
+      - POSTGRES_PASSWORD=sekret
+    networks:
+      - sac-backend
+
+  redis: &redis
+    image: redis:6.0.7-alpine
+    networks:
+      - sac-backend
+
+###############################################################################
+#                         D E V E L O P M E N T
+###############################################################################
+  dev: &dev
+    <<: *app
+    depends_on:
+      - postgres-dev
+      - redis-dev
+    environment:
+      - RAILS_ENV=development
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://sac:sekret@postgres-dev/sacdb
+      - REDIS_URL=redis://redis-dev:6379
+
+  postgres-dev:
+    <<: *postgres
+
+  redis-dev:
+    <<: *redis
+
+  console:
+    <<: *dev
+    networks:
+      - sac-exposed
+      - sac-backend
+
+  server:
+    <<: *dev
+    command: ["bundle", "exec", "./bin/validate-migrated && rails server -b 0.0.0.0"]
+    ports:
+      - "3000:3000"
+    networks:
+      - sac-exposed
+      - sac-backend
+
+  worker:
+    <<: *dev
+    command: bundle exec sidekiq
+    networks:
+      - sac-backend
+
+###############################################################################
+#                              T E S T I N G
+###############################################################################
+  test: &test
+    <<: *app
+    container_name: smart_ac_test
+    networks:
+      - sac-exposed
+      - sac-backend
+    environment:
+      RAILS_ENV: test
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://sac:sekret@postgres-test/sacdb"
+    depends_on:
+      - postgres-test
+
+  spring:
+    <<: *test
+    command: ["bundle", "exec", "./bin/validate-migrated && spring server"]
+
+  postgres-test:
+    <<: *postgres
+    tmpfs: /var/lib/postgresql/data
+
+networks:
+  sac-exposed:
+    driver: bridge
+    name: sac-exposed
+  sac-backend:
+    driver: bridge
+    name: sac-backend
+    internal: true
+volumes:
+  node_modules:
+    name: smart_ac_node_modules
+  vendor_bundle:
+    name: smart_ac_vendor_bundle

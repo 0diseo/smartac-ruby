@@ -1,0 +1,21 @@
+!!! 5
+%html
+  %head
+    %title Smart AC Controller
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_pack_tag 'application'
+    = stylesheet_link_tag '//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+
+  %body
+    .wrapper
+      = render partial: 'layouts/nav'
+    .content-wrapper.pt-4.px-5
+      .container
+        - flash.each do |type, msg|
+          %div{class: "#{bootstrap_classes_for_flash(type)}"}
+            = msg
+            %button.close{'data-dismiss' => 'alert'}x
+        = yield

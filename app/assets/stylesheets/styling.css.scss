@@ -1,0 +1,31 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+.device-card:hover {
+  background-color: var(--secondary);
+  .card-body {
+    color: var(--white);
+    a {
+      color: var(--dark);
+    }
+  }
+}
+
+.badge {
+  position: absolute;
+  font-size: xx-small;
+  margin-left: -5px;
+  margin-top: -10px;
+  background-color: var(--orange);
+  color: white;
+}
+
+.dropdown-notification {
+  .dropdown-notification-content {
+    p {
+      font-size: .9rem;
+      %span {
+        font-size: .8rem;
+      }
+    }
+  }
+}

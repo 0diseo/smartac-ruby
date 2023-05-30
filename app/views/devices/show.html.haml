@@ -1,0 +1,21 @@
+.h2 Device Information
+.container
+  .row
+    %dl.row
+      %dt.col-sm-4 Serial Number
+      %dd.col-sm-8= device.serial_number
+      %dt.col-sm-4 Firmware Version
+      %dd.col-sm-8= device.firmware_version
+
+  .h3 Average temperature per day
+  .container
+    = line_chart chart_average_per_day(:temperature)
+
+  .h3 Average humidity per day
+  .container
+    = line_chart chart_average_per_day(:humidity)
+
+  .h3 Average co level per day
+  .container
+    = line_chart chart_average_per_day(:co_level)
+

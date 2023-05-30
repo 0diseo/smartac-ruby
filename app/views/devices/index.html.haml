@@ -1,0 +1,11 @@
+.row
+  - devices.each do |device|
+    .col-sm-2
+      .card.text-center.my-2.device-card.hoverable
+        .card-img-top
+          = link_to device, class: 'text-reset text-decoration-none' do
+            %i.fas.fa-cog.fa-5x
+        .card-body
+          = link_to device.serial_number, device
+          %br/
+          %span.muted= device.firmware_version

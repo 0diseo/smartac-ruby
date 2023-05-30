@@ -1,0 +1,16 @@
+FROM jdubz/rubynode:2.6.6
+
+WORKDIR /app
+
+RUN apk --update add postgresql-dev tzdata
+
+COPY Gemfile* package.json yarn.lock ./
+
+RUN bundle install --jobs $(nproc) && \
+    MAKEFLAGS=-j$(nproc) yarn install
+
+COPY . /app
+
+EXPOSE 3000
+
+CMD ["bundle", "exec", "rails", "console"]

@@ -1,0 +1,15 @@
+.container.pt-3
+  .d-flex.flex-row-reverse
+    = link_to 'New User', new_user_invitation_path, class: 'btn btn-primary p02'
+  %table.table.mt-3
+    %thead.thead-dark
+      %tr
+        %th{scope: 'col'} Email
+        %th{scope: 'col'} Name
+        %th{scope: 'col'} Actions
+    %tbody
+      - users.each do |u|
+        %tr
+          %td= u.email
+          %td= u.full_name
+          %td
